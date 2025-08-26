@@ -4,6 +4,9 @@ import com.khan.quiz.dto.AuthResponse;
 import com.khan.quiz.dto.LoginRequest;
 import com.khan.quiz.dto.RegisterRequest;
 import com.khan.quiz.dto.UserDetailsDto;
+import com.khan.quiz.exception.InvalidCredentialsException;
+import com.khan.quiz.exception.ResourceNotFoundException;
+import com.khan.quiz.exception.UserAlreadyExistsException;
 import com.khan.quiz.model.Role;
 import com.khan.quiz.model.User;
 import com.khan.quiz.repository.UserRepository;
@@ -39,7 +42,7 @@ public class AuthenticationService {
 
     public AuthResponse registerUser(RegisterRequest request, Role role, String message) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("User already exists");
+            throw new UserAlreadyExistsException("User already exists with email: " + request.getEmail());
         }
 
         // create user
@@ -72,10 +75,10 @@ public class AuthenticationService {
 
     public AuthResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + loginRequest.getEmail()));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException("Invalid credentials");
         }
 
         String token = jwtService.generateToken(user);

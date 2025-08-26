@@ -21,7 +21,6 @@ import com.khan.quiz.security.JwtAuthFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
-    // private final UserDetailsService userDetailsService;
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
@@ -34,7 +33,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/register/admin").permitAll() // public endpoints
+                        .requestMatchers("/api/auth/**").permitAll() // public endpoints
                         .anyRequest().authenticated() // everything else requires login
                 )
                 .sessionManagement(session -> session
