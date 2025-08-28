@@ -6,18 +6,20 @@ import com.khan.quiz.model.Quiz;
 import com.khan.quiz.model.User;
 import com.khan.quiz.repository.QuizRepository;
 import com.khan.quiz.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class QuizService {
-    private QuizRepository quizRepository;
-    private UserRepository userRepository;
+    private final QuizRepository quizRepository;
+    private final UserRepository userRepository;
+
+    public QuizService(QuizRepository quizRepository, UserRepository userRepository) {
+        this.quizRepository = quizRepository;
+        this.userRepository = userRepository;
+    }
 
     public QuizDto createQuiz(QuizDto quizDto) {
         User teacher = userRepository.findById(quizDto.getCreatedById())
