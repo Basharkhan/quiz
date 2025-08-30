@@ -21,7 +21,6 @@ public class QuestionService {
     private final QuizRepository quizRepository;
 
     public QuestionDto createQuestion(QuestionDto questionDto) {
-        System.out.println(questionDto);
         Quiz quiz = quizRepository
                 .findById(questionDto.getQuizId())
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found"));
@@ -59,14 +58,19 @@ public class QuestionService {
         return response;
     }
 
-//    public List<QuestionDto> getQuestionsByQuizId(Long quizId) {
-//        return questionRepository
-//                .findByQuizId(quizId)
-//                .stream()
-//                .map(q -> {
-//                    QuestionDto questionDto = new QuestionDto();
-//                    questionDto.setText(q.getText());
-//                    questionDto.setOptions(q.getOptions());
-//                })
-//    }
+    public List<QuestionDto> getQuestionsByQuizId(Long quizId) {
+        return questionRepository
+                .findByQuizId(quizId)
+                .stream()
+                .map(q -> {
+                    QuestionDto dto = new QuestionDto();
+                    dto.setText(q.getText());
+                    dto.setOptions(q.getOptions()
+                            .stream()
+                            .map(option -> new OptionDto(option.getText(), option.isCorrect()))
+                            .collect(Collectors.toList())
+                    );
+                    return dto;
+                }).collect(Collectors.toList());
+    }
 }

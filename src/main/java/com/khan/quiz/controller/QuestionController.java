@@ -9,10 +9,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -24,5 +23,12 @@ public class QuestionController {
     @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN')")
     public ResponseEntity<QuestionDto> createQuiz(@Valid @RequestBody QuestionDto questionDto) {
         return ResponseEntity.ok(questionService.createQuestion(questionDto));
+    }
+
+    @GetMapping("/quiz/{quizId}")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN')")
+    public ResponseEntity<List<QuestionDto>> getQuestionsByQuizId(@PathVariable Long quizId) {
+        List<QuestionDto> questions = questionService.getQuestionsByQuizId(quizId);
+        return ResponseEntity.ok(questions);
     }
 }

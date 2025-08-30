@@ -1,6 +1,5 @@
 package com.khan.quiz.repository;
 
-import com.khan.quiz.dto.QuestionDto;
 import com.khan.quiz.model.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -9,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    // List<QuestionDto> getQuestionsByQuizId(Long quizId);
+    List<Question> findByQuizId(Long quizId);
 }
