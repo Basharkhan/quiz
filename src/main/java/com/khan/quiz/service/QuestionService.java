@@ -51,7 +51,12 @@ public class QuestionService {
         response.setQuizId(savedQuestion.getQuiz().getId());
         response.setOptions(
                 savedQuestion.getOptions().stream()
-                        .map(opt -> new OptionDto(opt.getText(), opt.isCorrect()))
+                        .map(opt -> OptionDto
+                                .builder()
+                                .text(opt.getText())
+                                .correct(opt.isCorrect())
+                                .build()
+                        )
                         .collect(Collectors.toList())
         );
 
@@ -67,7 +72,12 @@ public class QuestionService {
                     dto.setText(q.getText());
                     dto.setOptions(q.getOptions()
                             .stream()
-                            .map(option -> new OptionDto(option.getText(), option.isCorrect()))
+                            .map(option -> OptionDto
+                                    .builder()
+                                    .text(option.getText())
+                                    .correct(option.isCorrect())
+                                    .build()
+                            )
                             .collect(Collectors.toList())
                     );
                     return dto;

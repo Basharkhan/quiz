@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class OptionDto {
-    private Long id;
-    private String text;
-    private boolean correct; // teacher only
+@NoArgsConstructor
+@Builder
+public class AnswerResponseDto {
+    private Long questionId;
+    private Long selectedOptionId;
+    private boolean correct;
 }

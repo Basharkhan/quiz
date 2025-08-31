@@ -33,6 +33,7 @@ public class QuizService {
 
         Quiz savedQuiz = quizRepository.save(quiz);
 
+        quizDto.setId(quiz.getId());
         quizDto.setCreatedById(savedQuiz.getCreatedBy().getId());
         return quizDto;
     }

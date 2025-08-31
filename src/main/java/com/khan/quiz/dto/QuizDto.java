@@ -6,6 +6,8 @@ import lombok.Data;
 
 @Data
 public class QuizDto {
+    private Long id;
+
     @NotBlank(message = "Title is required")
     private String title;
     private String description;

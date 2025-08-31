@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Attempt {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

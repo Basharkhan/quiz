@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttemptDto {
-    private User student;
-    private Quiz quiz;
-    private int score;
+public class AttemptRequestDto {
+    private Long userId;
+    private Long quizId;
+    private List<AnswerRequestDto> answers;
 }
