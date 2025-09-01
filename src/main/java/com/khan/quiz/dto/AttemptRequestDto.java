@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttemptRequestDto {
-    private Long userId;
     private Long quizId;
     private List<AnswerRequestDto> answers;
 }

@@ -3,9 +3,12 @@ package com.khan.quiz.service;
 import com.khan.quiz.dto.QuizDto;
 import com.khan.quiz.exception.ResourceNotFoundException;
 import com.khan.quiz.model.Quiz;
+import com.khan.quiz.model.Role;
 import com.khan.quiz.model.User;
 import com.khan.quiz.repository.QuizRepository;
 import com.khan.quiz.repository.UserRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +24,14 @@ public class QuizService {
         this.userRepository = userRepository;
     }
 
-    public QuizDto createQuiz(QuizDto quizDto) {
-        User teacher = userRepository.findById(quizDto.getCreatedById())
-                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+    public QuizDto createQuiz(QuizDto quizDto, Authentication authentication) {
+        String username = authentication.getName();
+        User teacher = userRepository.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!teacher.getRole().equals(Role.TEACHER) && !teacher.getRole().equals(Role.ADMIN)) {
+            throw new AccessDeniedException("Only teacher and admin can create a quiz");
+        }
 
         Quiz quiz = Quiz.builder()
                 .title(quizDto.getTitle())
@@ -33,17 +41,19 @@ public class QuizService {
 
         Quiz savedQuiz = quizRepository.save(quiz);
 
-        quizDto.setId(quiz.getId());
-        quizDto.setCreatedById(savedQuiz.getCreatedBy().getId());
-        return quizDto;
+        return QuizDto.builder()
+                .id(savedQuiz.getId())
+                .title(savedQuiz.getTitle())
+                .description(savedQuiz.getDescription())
+                .build();
     }
 
     public List<QuizDto> getAllQuizzes() {
         return quizRepository.findAll().stream().map(quiz -> {
             QuizDto quizDto = new QuizDto();
+            quizDto.setId(quiz.getId());
             quizDto.setTitle(quiz.getTitle());
             quizDto.setDescription(quiz.getDescription());
-            quizDto.setCreatedById(quiz.getCreatedBy().getId());
             return quizDto;
         }).collect(Collectors.toList());
     }

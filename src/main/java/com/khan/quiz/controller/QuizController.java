@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +22,8 @@ public class QuizController {
 
     @PostMapping
     @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN')")
-    public ResponseEntity<QuizDto> createQuiz(@Valid @RequestBody QuizDto quizDto) {
-        return ResponseEntity.ok(quizService.createQuiz(quizDto));
+    public ResponseEntity<QuizDto> createQuiz(@Valid @RequestBody QuizDto quizDto, Authentication authentication) {
+        return ResponseEntity.ok(quizService.createQuiz(quizDto, authentication));
     }
 
     @GetMapping

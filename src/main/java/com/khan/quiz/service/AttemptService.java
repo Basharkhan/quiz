@@ -9,6 +9,7 @@ import com.khan.quiz.model.*;
 import com.khan.quiz.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,9 +27,10 @@ public class AttemptService {
     private final OptionRepository optionRepository;
 
     @Transactional
-    public AttemptResponseDto submitAttempt(AttemptRequestDto request) {
-        User student = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + request.getUserId()));
+    public AttemptResponseDto submitAttempt(AttemptRequestDto request, Authentication authentication) {
+        String username = authentication.getName();
+        User student = userRepository.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
         Quiz quiz = quizRepository.findById(request.getQuizId())
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id: " + request.getQuizId()));

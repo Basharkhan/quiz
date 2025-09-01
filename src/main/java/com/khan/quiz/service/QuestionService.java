@@ -47,12 +47,14 @@ public class QuestionService {
         Question savedQuestion = questionRepository.save(question);
 
         QuestionDto response = new QuestionDto();
+        response.setId(savedQuestion.getId());
         response.setText(savedQuestion.getText());
         response.setQuizId(savedQuestion.getQuiz().getId());
         response.setOptions(
                 savedQuestion.getOptions().stream()
                         .map(opt -> OptionDto
                                 .builder()
+                                .id(opt.getId())
                                 .text(opt.getText())
                                 .correct(opt.isCorrect())
                                 .build()
@@ -70,10 +72,13 @@ public class QuestionService {
                 .map(q -> {
                     QuestionDto dto = new QuestionDto();
                     dto.setText(q.getText());
+                    dto.setId(q.getId());
+                    dto.setQuizId(q.getQuiz().getId());
                     dto.setOptions(q.getOptions()
                             .stream()
                             .map(option -> OptionDto
                                     .builder()
+                                    .id(option.getId())
                                     .text(option.getText())
                                     .correct(option.isCorrect())
                                     .build()

@@ -9,6 +9,8 @@ import java.util.List;
 
 @Data
 public class QuestionDto {
+    private Long id;
+
     @NotBlank(message = "Text is required")
     private String text;
 
