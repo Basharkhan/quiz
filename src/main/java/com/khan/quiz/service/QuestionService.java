@@ -88,4 +88,23 @@ public class QuestionService {
                     return dto;
                 }).collect(Collectors.toList());
     }
+
+    public QuestionDto  getQuestionById(Long id) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id: " + id));
+
+        QuestionDto questionDto = new QuestionDto();
+        questionDto.setId(question.getId());
+        questionDto.setText(question.getText());
+        questionDto.setQuizId(question.getQuiz().getId());
+        questionDto.setOptions(question.getOptions().stream().map(option -> OptionDto
+                .builder()
+                .id(option.getId())
+                .text(option.getText())
+                .correct(option.isCorrect())
+                .build()
+        ).collect(Collectors.toList()));
+
+        return questionDto;
+    }
 }
