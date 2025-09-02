@@ -2,10 +2,9 @@ package com.khan.quiz.service;
 
 import com.khan.quiz.dto.OptionDto;
 import com.khan.quiz.dto.QuestionDto;
+import com.khan.quiz.dto.UpdateQuestionDto;
 import com.khan.quiz.exception.ResourceNotFoundException;
-import com.khan.quiz.model.Option;
-import com.khan.quiz.model.Question;
-import com.khan.quiz.model.Quiz;
+import com.khan.quiz.model.*;
 import com.khan.quiz.repository.QuestionRepository;
 import com.khan.quiz.repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +64,41 @@ public class QuestionService {
         return response;
     }
 
+    public UpdateQuestionDto updateQuestion(Long id, UpdateQuestionDto questionDto) {
+        Question question =  questionRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id: " + id));
+
+        question.setText(questionDto.getText());
+
+        List<Option> options = questionDto.getOptions().stream().map(opt -> Option
+                .builder()
+                .id(opt.getId())
+                .text(opt.getText())
+                .correct(opt.isCorrect())
+                .question(question)
+                .build()
+        ).collect(Collectors.toList());
+
+        question.getOptions().clear();
+        question.getOptions().addAll(options);
+
+        Question updatedQuestion = questionRepository.save(question);
+
+        return UpdateQuestionDto
+                .builder()
+                .id(updatedQuestion.getId())
+                .text(updatedQuestion.getText())
+                .options(updatedQuestion.getOptions().stream().map(opt -> OptionDto
+                        .builder()
+                        .id(opt.getId())
+                        .text(opt.getText())
+                        .correct(opt.isCorrect())
+                        .build()
+                ).collect(Collectors.toList()))
+                .build();
+    }
+
     public List<QuestionDto> getQuestionsByQuizId(Long quizId) {
         return questionRepository
                 .findByQuizId(quizId)
@@ -106,5 +140,12 @@ public class QuestionService {
         ).collect(Collectors.toList()));
 
         return questionDto;
+    }
+
+    public void deleteQuestionById(Long id) {
+        questionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id: " + id));
+
+        questionRepository.deleteById(id);
     }
 }

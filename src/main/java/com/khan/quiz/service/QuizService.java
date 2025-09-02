@@ -48,15 +48,7 @@ public class QuizService {
                 .build();
     }
 
-    public QuizDto updateQuiz(Long id, QuizDto quizDto, Authentication authentication) {
-        String username = authentication.getName();
-        User teacher = userRepository.findByEmail(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        if (!teacher.getRole().equals(Role.TEACHER) && !teacher.getRole().equals(Role.ADMIN)) {
-            throw new AccessDeniedException("Only teacher and admin can update a quiz");
-        }
-
+    public QuizDto updateQuiz(Long id, QuizDto quizDto) {
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id: " + id));
 

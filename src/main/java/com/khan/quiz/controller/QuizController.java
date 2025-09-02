@@ -57,8 +57,8 @@ public class QuizController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<QuizDto>> updateQuiz(@PathVariable Long id, @Valid @RequestBody QuizDto quizDto, Authentication authentication) {
-        QuizDto updatedQuiz = quizService.updateQuiz(id, quizDto, authentication);
+    public ResponseEntity<ApiResponse<QuizDto>> updateQuiz(@PathVariable Long id, @Valid @RequestBody QuizDto quizDto) {
+        QuizDto updatedQuiz = quizService.updateQuiz(id, quizDto);
 
         ApiResponse<QuizDto> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
