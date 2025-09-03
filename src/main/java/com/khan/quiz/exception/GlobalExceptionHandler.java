@@ -38,6 +38,11 @@ public class GlobalExceptionHandler {
         return buildResponse(ex, HttpStatus.CONFLICT, request); // 404
     }
 
+    @ExceptionHandler(InvalidQuizDataException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidQuizData(InvalidQuizDataException ex, HttpServletRequest request) {
+        return buildResponse(ex, HttpStatus.BAD_REQUEST, request); // 404
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();

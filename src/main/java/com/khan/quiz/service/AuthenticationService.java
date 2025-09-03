@@ -27,20 +27,20 @@ public class AuthenticationService {
 
     @Transactional
     public AuthResponse registerAdmin(RegisterRequest request) {
-        return registerUser(request, Role.ADMIN, "Admin registered successfully!");
+        return registerUser(request, Role.ADMIN);
     }
 
     @Transactional
     public AuthResponse registerTeacher(RegisterRequest request) {
-        return registerUser(request, Role.TEACHER, "Teacher registered successfully!");
+        return registerUser(request, Role.TEACHER);
     }
 
     @Transactional
     public AuthResponse registerStudent(RegisterRequest request) {
-        return registerUser(request, Role.STUDENT, "Student registered successfully!");
+        return registerUser(request, Role.STUDENT);
     }
 
-    public AuthResponse registerUser(RegisterRequest request, Role role, String message) {
+    public AuthResponse registerUser(RegisterRequest request, Role role) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException("User already exists with email: " + request.getEmail());
         }
@@ -67,8 +67,6 @@ public class AuthenticationService {
 
         return AuthResponse.builder()
                 .token(token)
-                .message(message)
-                .timestamp(LocalDateTime.now())
                 .userDetailsDto(userDetailsDto)
                 .build();
     }
@@ -91,8 +89,6 @@ public class AuthenticationService {
 
         return AuthResponse.builder()
                 .token(token)
-                .message("Login successful")
-                .timestamp(LocalDateTime.now())
                 .userDetailsDto(userDetailsDto)
                 .build();
     }

@@ -22,14 +22,14 @@ public class AttemptController {
     private final AttemptService attemptService;
 
     @PostMapping
-    @PreAuthorize("hasRole('STUDENT') or hasRole('TEACHER')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('TEACHER') or hasRole('ADMIN')")
     public ResponseEntity<AttemptResponseDto> submitAttempt(
             @Valid @RequestBody AttemptRequestDto request, Authentication authentication) {
         return ResponseEntity.ok(attemptService.submitAttempt(request, authentication));
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('TEACHER')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('TEACHER') or hasRole('ADMIN')")
     public ResponseEntity<List<AttemptResponseDto>> getAttemptsByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(attemptService.getAttemptsByUser(userId));
     }

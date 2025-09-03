@@ -41,7 +41,6 @@ public class AttemptService {
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id: " + request.getQuizId()));
 
 
-
         int score = 0;
         List<AnswerResponseDto> answerResponses = new ArrayList<>();
 
@@ -117,6 +116,4 @@ public class AttemptService {
                         .build())
                 .collect(Collectors.toList());
     }
-
-
 }

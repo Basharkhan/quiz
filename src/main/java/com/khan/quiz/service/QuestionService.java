@@ -3,6 +3,7 @@ package com.khan.quiz.service;
 import com.khan.quiz.dto.OptionDto;
 import com.khan.quiz.dto.QuestionDto;
 import com.khan.quiz.dto.UpdateQuestionDto;
+import com.khan.quiz.exception.InvalidQuizDataException;
 import com.khan.quiz.exception.ResourceNotFoundException;
 import com.khan.quiz.model.*;
 import com.khan.quiz.repository.QuestionRepository;
@@ -29,19 +30,29 @@ public class QuestionService {
                 .quiz(quiz)
                 .build();
 
-        if (questionDto.getOptions() != null && !questionDto.getOptions().isEmpty()) {
-            List<Option> options = questionDto
-                    .getOptions()
-                    .stream()
-                    .map(optionDto -> Option
-                            .builder()
-                            .text(optionDto.getText())
-                            .correct(optionDto.isCorrect())
-                            .question(question)
-                            .build()
-                    ).toList();
-            question.setOptions(options);
+        if (questionDto.getOptions() == null || questionDto.getOptions().isEmpty()) {
+            throw new InvalidQuizDataException("Question must have at least one option");
         }
+
+        boolean hasCorrectOption = questionDto.getOptions()
+                .stream()
+                .anyMatch(OptionDto::isCorrect);
+
+        if (!hasCorrectOption) {
+            throw new InvalidQuizDataException("Question must have at least one correct option");
+        }
+
+        List<Option> options = questionDto
+                .getOptions()
+                .stream()
+                .map(optionDto -> Option
+                        .builder()
+                        .text(optionDto.getText())
+                        .correct(optionDto.isCorrect())
+                        .question(question)
+                        .build()
+                ).toList();
+        question.setOptions(options);
 
         Question savedQuestion = questionRepository.save(question);
 
