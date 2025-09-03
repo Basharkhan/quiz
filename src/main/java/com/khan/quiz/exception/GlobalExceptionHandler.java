@@ -33,6 +33,11 @@ public class GlobalExceptionHandler {
         return buildResponse(ex, HttpStatus.NOT_FOUND, request); // 404
     }
 
+    @ExceptionHandler(QuizAlreadySubmittedException.class)
+    public ResponseEntity<ApiErrorResponse> handleQuizAlreadySubmitted(QuizAlreadySubmittedException ex, HttpServletRequest request) {
+        return buildResponse(ex, HttpStatus.CONFLICT, request); // 404
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();

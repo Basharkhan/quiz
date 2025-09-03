@@ -1,9 +1,7 @@
 package com.khan.quiz.service;
 
-import com.khan.quiz.dto.AnswerRequestDto;
-import com.khan.quiz.dto.AnswerResponseDto;
-import com.khan.quiz.dto.AttemptRequestDto;
-import com.khan.quiz.dto.AttemptResponseDto;
+import com.khan.quiz.dto.*;
+import com.khan.quiz.exception.QuizAlreadySubmittedException;
 import com.khan.quiz.exception.ResourceNotFoundException;
 import com.khan.quiz.model.*;
 import com.khan.quiz.repository.*;
@@ -16,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +32,15 @@ public class AttemptService {
         User student = userRepository.findByEmail(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
+        boolean hasAlreadyAnswered = attemptRepository.existsByStudentIdAndQuizId(student.getId(), request.getQuizId());
+        if (hasAlreadyAnswered) {
+            throw new QuizAlreadySubmittedException("Attempt already submitted");
+        }
+
         Quiz quiz = quizRepository.findById(request.getQuizId())
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id: " + request.getQuizId()));
+
+
 
         int score = 0;
         List<AnswerResponseDto> answerResponses = new ArrayList<>();
@@ -94,4 +101,22 @@ public class AttemptService {
                         .build())
                 .toList();
     }
+
+    public List<LeaderBoardEntryDto> getLeaderboard(Long quizId) {
+        List<Attempt> attempts = attemptRepository.findByQuizIdOrderByScoreDesc(quizId);
+
+        AtomicInteger rankCounter = new AtomicInteger(1);
+
+        return attempts.stream()
+                .map(attempt -> LeaderBoardEntryDto.builder()
+                        .userId(attempt.getStudent().getId())
+                        .studentName(attempt.getStudent().getFullName())
+                        .score(attempt.getScore())
+                        .attemptedDate(attempt.getAttemptedDate())
+                        .rank(rankCounter.getAndIncrement())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
 }

@@ -3,6 +3,7 @@ package com.khan.quiz.controller;
 import com.khan.quiz.dto.ApiResponse;
 import com.khan.quiz.dto.QuizDetailsDto;
 import com.khan.quiz.dto.QuizDto;
+import com.khan.quiz.dto.StudentQuizDetailsDto;
 import com.khan.quiz.model.Quiz;
 import com.khan.quiz.service.QuizService;
 import jakarta.validation.Valid;
@@ -46,6 +47,21 @@ public class QuizController {
         QuizDetailsDto quizDetailsDto = quizService.getQuizById(id);
 
         ApiResponse<QuizDetailsDto> response = new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "Quiz retrieved successfully",
+            quizDetailsDto,
+            LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/attempt")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN') or hasRole('STUDENT')")
+    public ResponseEntity<ApiResponse<StudentQuizDetailsDto>> getQuizByIdForAttempt(@PathVariable Long id) {
+        StudentQuizDetailsDto quizDetailsDto = quizService.getQuizByIdForAttempt(id);
+
+        ApiResponse<StudentQuizDetailsDto> response = new ApiResponse<>(
             HttpStatus.OK.value(),
             "Quiz retrieved successfully",
             quizDetailsDto,

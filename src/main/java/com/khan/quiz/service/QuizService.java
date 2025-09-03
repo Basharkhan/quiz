@@ -1,9 +1,6 @@
 package com.khan.quiz.service;
 
-import com.khan.quiz.dto.OptionDto;
-import com.khan.quiz.dto.QuestionDto;
-import com.khan.quiz.dto.QuizDetailsDto;
-import com.khan.quiz.dto.QuizDto;
+import com.khan.quiz.dto.*;
 import com.khan.quiz.exception.ResourceNotFoundException;
 import com.khan.quiz.model.Quiz;
 import com.khan.quiz.model.Role;
@@ -83,6 +80,30 @@ public class QuizService {
                                 .id(option.getId())
                                 .text(option.getText())
                                 .correct(option.isCorrect())
+                                .build()).collect(Collectors.toList()))
+                        .build()
+                ).collect(Collectors.toList()))
+                .build();
+    }
+
+    public StudentQuizDetailsDto getQuizByIdForAttempt(Long id) {
+        Quiz quiz = quizRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id: " + id));
+
+        return StudentQuizDetailsDto
+                .builder()
+                .id(quiz.getId())
+                .title(quiz.getTitle())
+                .description(quiz.getDescription())
+                .createdByEmail(quiz.getCreatedBy().getEmail())
+                .questions(quiz.getQuestions().stream().map(q -> StudentQuestionDto
+                        .builder()
+                        .id(q.getId())
+                        .text(q.getText())
+                        .options(q.getOptions().stream().map(option -> StudentOptionDto
+                                .builder()
+                                .id(option.getId())
+                                .text(option.getText())
                                 .build()).collect(Collectors.toList()))
                         .build()
                 ).collect(Collectors.toList()))
