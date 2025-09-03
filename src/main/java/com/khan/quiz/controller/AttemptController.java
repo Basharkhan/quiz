@@ -42,5 +42,4 @@ public class AttemptController {
                 new ApiResponse<>(200, "Leaderboard retrieved successfully", leaderboard, LocalDateTime.now())
         );
     }
-
 }
