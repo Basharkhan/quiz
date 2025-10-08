@@ -4,7 +4,6 @@ import com.khan.quiz.dto.ApiResponse;
 import com.khan.quiz.dto.QuizDetailsDto;
 import com.khan.quiz.dto.QuizDto;
 import com.khan.quiz.dto.StudentQuizDetailsDto;
-import com.khan.quiz.model.Quiz;
 import com.khan.quiz.service.QuizService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
